@@ -111,45 +111,45 @@ Get a lock: "g %s\n", lockname
 ------------------------------
 In the following example "foo" is available, but "bar" is already locked by another client
 
-> g foo
-< 1 Lock Get Success: foo
-> g bar
-< 0 Lock Get Failure: bar
+    > g foo
+    < 1 Lock Get Success: foo
+    > g bar
+    < 0 Lock Get Failure: bar
 
 Release a lock: "r %s\n", lockname
 ----------------------------------
-> g foo
-< 1 Lock Get Success: foo
-> r foo
-< 1 Lock Release Success: foo
-> r bar
-< 0 Lock Release Failure: bar
+    > g foo
+    < 1 Lock Get Success: foo
+    > r foo
+    < 1 Lock Release Success: foo
+    > r bar
+    < 0 Lock Release Failure: bar
 
 Inspect a lock: "i %s\n", lockname
 ----------------------------------
-> i foo
-< 1 Lock Is Locked: foo
-> i bar
-< 0 Lock Not Locked: bar
+    > i foo
+    < 1 Lock Is Locked: foo
+    > i bar
+    < 0 Lock Not Locked: bar
 
 Get a list of one or more locks and their locking connections: "d\n", or "d %s\n", lockname (only available when -dump is true)
 -------------------------------------------------------------------------------------------------------------------------------
 This is mainly useful for debugging
 
-> d
-< baz: 174.62.83.171:59060
-< foo: 174.62.83.171:59056
-< bar: 174.62.83.171:59060
-< boo: 174.62.83.171:59060
-> d foo
-< foo: 174.62.83.171:59056
+    > d
+    < baz: 174.62.83.171:59060
+    < foo: 174.62.83.171:59056
+    < bar: 174.62.83.171:59060
+    < boo: 174.62.83.171:59060
+    > d foo
+    < foo: 174.62.83.171:59056
 
 Get a printout of the lock data structure: "dump\n" (only available when -dump is true)
 ---------------------------------------------------------------------------------------
 This is mainly useful for debugging
 
-> dump
-< map[boo:174.62.83.171:59060 baz:174.62.83.171:59060 foo:174.62.83.171:59056 bar:174.62.83.171:59060]
+    > dump
+    < map[boo:174.62.83.171:59060 baz:174.62.83.171:59060 foo:174.62.83.171:59056 bar:174.62.83.171:59060]
 
 Shared Locks API
 ================
@@ -160,59 +160,63 @@ failure %d == 0, or represent [lack of] concurrency %d >= 0
 
 Get a shared lock: "sg %s\n"
 ----------------------------
-client1> sg foo
-client1< 1 Shared Lock Get Success: foo
-client2> sg foo
-client2< 2 Shared Lock Get Success: foo
-client2> sg bar
-client2< 1 Shared Lock Get Success: bar
+    client1> sg foo
+    client1< 1 Shared Lock Get Success: foo
+    client2> sg foo
+    client2< 2 Shared Lock Get Success: foo
+    client2> sg bar
+    client2< 1 Shared Lock Get Success: bar
 
 Release a shared lock: "sr %s\n"
 --------------------------------
-client1> sg foo
-client1< 1 Shared Lock Get Success: foo
-client2> sg foo
-client2< 2 Shared Lock Get Success: foo
-client3> si foo
-client3< 2 Shared Lock Is Locked: foo
-client1> sr foo
-client1< 1 Shared Lock Release Success: foo
-client3> si foo
-client3< 1 Shared Lock Is Locked: foo
-client2> sr foo
-client2< 1 Shared Lock Release Success: foo
-client3> si foo
-client3< 0 Shared Lock Not Locked: foo
+
+    client1> sg foo
+    client1< 1 Shared Lock Get Success: foo
+    client2> sg foo
+    client2< 2 Shared Lock Get Success: foo
+    client3> si foo
+    client3< 2 Shared Lock Is Locked: foo
+    client1> sr foo
+    client1< 1 Shared Lock Release Success: foo
+    client3> si foo
+    client3< 1 Shared Lock Is Locked: foo
+    client2> sr foo
+    client2< 1 Shared Lock Release Success: foo
+    client3> si foo
+    client3< 0 Shared Lock Not Locked: foo
 
 Inspect a shared lock: "si %s\n"
 --------------------------------
-client1> si foo
-client1< 0 Shared Lock Not Locked: foo
-client1> sg foo
-client1< 1 Shared Lock Get Success: foo
-client2> si foo
-client2< 1 Shared Lock Is Locked: foo
-client2> sg foo
-client2< 2 Shared Lock Get Success: foo
-client1> si foo
-client1< 2 Shared Lock Get Success: foo
+
+    client1> si foo
+    client1< 0 Shared Lock Not Locked: foo
+    client1> sg foo
+    client1< 1 Shared Lock Get Success: foo
+    client2> si foo
+    client2< 1 Shared Lock Is Locked: foo
+    client2> sg foo
+    client2< 2 Shared Lock Get Success: foo
+    client1> si foo
+    client1< 2 Shared Lock Get Success: foo
 
 Get a list of one or more locks and their locking connections: "sd\n", or "sd %s\n", lockname (only available when -dump is true)
 ---------------------------------------------------------------------------------------------------------------------------------
-> sd
-< blah: 174.62.83.171:59615
-< bar: 174.62.83.171:59615
-< foo: 174.62.83.171:59615
-< foo: 174.62.83.171:59614
-< baz: 174.62.83.171:59615
-> sd foo
-< foo: 174.62.83.171:59615
-< foo: 174.62.83.171:59614
+
+    > sd
+    < blah: 174.62.83.171:59615
+    < bar: 174.62.83.171:59615
+    < foo: 174.62.83.171:59615
+    < foo: 174.62.83.171:59614
+    < baz: 174.62.83.171:59615
+    > sd foo
+    < foo: 174.62.83.171:59615
+    < foo: 174.62.83.171:59614
 
 Get a printout of the lock data structure: "dump shared\n"
 ----------------------------------------------------------
-> dump shared
-< map[blah:[174.62.83.171:59615] bar:[174.62.83.171:59615] foo:[174.62.83.171:59615 174.62.83.171:59614] baz:[174.62.83.171:59615]]
+
+    > dump shared
+    < map[blah:[174.62.83.171:59615] bar:[174.62.83.171:59615] foo:[174.62.83.171:59615 174.62.83.171:59614] baz:[174.62.83.171:59615]]
 
 Registry API
 ============
@@ -225,64 +229,67 @@ and the second is the registered name of the connection (which would be
 used in the output of the s?d commands and defaults to the first parameter 
 if the iam command was not used to register a name for the current session)
 
-< me
-> 1 127.0.0.1:57871 127.0.0.1:57871
-< iam foo
-> 1 ok
-< me
-> 1 127.0.0.1:57871 foo
+    < me
+    > 1 127.0.0.1:57871 127.0.0.1:57871
+    < iam foo
+    > 1 ok
+    < me
+    > 1 127.0.0.1:57871 foo
 
 Set the name for your connection (only available when -registry is true)
 ------------------------------------------------------------------------
-> g lock1
-< 1 Got Lock
-> d lock1
-< lock1: 127.0.0.1:60882
-> iam foo
-< 1 ok
-> d lock1
-< lock1: foo
-> iam
-< 1 ok
-> d lock1
-< lock1: 127.0.0.1:60882
+
+    > g lock1
+    < 1 Got Lock
+    > d lock1
+    < lock1: 127.0.0.1:60882
+    > iam foo
+    < 1 ok
+    > d lock1
+    < lock1: foo
+    > iam
+    < 1 ok
+    > d lock1
+    < lock1: 127.0.0.1:60882
 
 Find which clients have chosen to be a specific name (only available when -dump is true and -registry is true)
 --------------------------------------------------------------------------------------------------------------
-client1> who
-client1< 
-client1> iam me
-client1< 1 ok
-client2> iam someone_else
-client2< 1 ok
-client1> who
-client1< 127.0.0.1:60882: me
-client1< 127.0.0.1:60918: someone_else
-client1> who someone_else
-client1< 127.0.0.1:60918: someone_else
+
+    client1> who
+    client1< 
+    client1> iam me
+    client1< 1 ok
+    client2> iam someone_else
+    client2< 1 ok
+    client1> who
+    client1< 127.0.0.1:60882: me
+    client1< 127.0.0.1:60918: someone_else
+    client1> who someone_else
+    client1< 127.0.0.1:60918: someone_else
 
 Stats API
 =========
 
 Get stats information: "q\n"
 ----------------------------
-> q
-< command_d: 4
-< command_dump: 1
-< command_g: 9
-< command_i: 7
-< command_q: 1
-< command_r: 3
-< command_sd: 1
-< command_sg: 1
-< command_si: 2
-< command_sr: 1
-< connections: 2
-< invalid_commands: 23
-< locks: 4
-< orphans: 2
-< shared_locks: 1
-< shared_orphans: 1
+
+    > q
+    < command_d: 4
+    < command_dump: 1
+    < command_g: 9
+    < command_i: 7
+    < command_q: 1
+    < command_r: 3
+    < command_sd: 1
+    < command_sg: 1
+    < command_si: 2
+    < command_sr: 1
+    < connections: 2
+    < invalid_commands: 23
+    < locks: 4
+    < orphans: 2
+    < shared_locks: 1
+    < shared_orphans: 1
 
 Stats Response: "command_%s"
 ----------------------------
